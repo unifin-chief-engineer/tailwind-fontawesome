@@ -5,12 +5,17 @@ const icons = require('./manifest.js');
 module.exports = plugin.withOptions(
     (options) => {
         return function ({ e, addUtilities, theme }) {
-            let pro, version, family, custom;
-            if (typeof options !== 'undefined') {
-                ({ pro, version, family, custom } = options);
-            }
-
-            icons.push(...(custom || []));
+            const { pro, version, family, custom } = options || {};
+            const configuredIcons = [...icons, ...(custom || [])];
+            const escapeClassName =
+                typeof e === 'function'
+                    ? e
+                    : (className) => className.replace(/([^a-zA-Z0-9-_])/g, '\\$1');
+            const sharedIconStyles = {
+                display: 'inline-block',
+                'text-rendering': 'auto',
+                '-webkit-font-smoothing': 'antialiased'
+            };
 
             const fontVersion = version === 6 ? 'Font Awesome 6' : 'Font Awesome 5';
             let fontFamily = pro ? '"' + fontVersion + ' Pro"' : '"' + fontVersion + ' Free"';
@@ -25,14 +30,9 @@ module.exports = plugin.withOptions(
             const utilities = [
                 // Positioning
                 {
-                    '.icon-before::before, .icon-after::after, .icon-outside::before, .icon-inline':
-                        {
-                            display: 'inline-block',
-                            'text-rendering': 'auto',
-                            '-webkit-font-smoothing': 'antialiased'
-                        },
                     '.icon-before': {
                         '&::before': {
+                            ...sharedIconStyles,
                             fontFamily: fontFamily,
                             verticalAlign: 'middle'
                         },
@@ -45,12 +45,14 @@ module.exports = plugin.withOptions(
                             content: '"" !important'
                         },
                         '&::after': {
+                            ...sharedIconStyles,
                             fontFamily: fontFamily,
                             verticalAlign: 'middle'
                         }
                     },
                     '.icon-outside': {
                         '&::before': {
+                            ...sharedIconStyles,
                             fontFamily: fontFamily,
                             verticalAlign: 'middle',
                             position: 'absolute',
@@ -61,6 +63,7 @@ module.exports = plugin.withOptions(
                         }
                     },
                     '.icon-inline': {
+                        ...sharedIconStyles,
                         fontFamily: fontFamily,
                         verticalAlign: 'middle'
                     }
@@ -68,7 +71,7 @@ module.exports = plugin.withOptions(
                 // Styles
                 Object.entries(iconStyle).map(([key, value]) => {
                     return {
-                        [`.${e(`icon-${key}`)}`]: {
+                        [`.${escapeClassName(`icon-${key}`)}`]: {
                             '&::before,&::after': {
                                 fontWeight: `${value}`
                             }
@@ -90,7 +93,7 @@ module.exports = plugin.withOptions(
                 // Spacing
                 Object.entries(iconSpacing).map(([key, value]) => {
                     return {
-                        [`.${e(`icon-space-${key}`)}`]: {
+                        [`.${escapeClassName(`icon-space-${key}`)}`]: {
                             '&.icon-before::before': {
                                 marginRight: `${value}`
                             },
@@ -152,9 +155,9 @@ module.exports = plugin.withOptions(
                     }
                 },
                 // Icons
-                icons.map((icon) => {
+                configuredIcons.map((icon) => {
                     return {
-                        [`.${e(`icon-${icon.name}`)}`]: {
+                        [`.${escapeClassName(`icon-${icon.name}`)}`]: {
                             '&::before': {
                                 content: `"\\${icon.code}"`
                             },
@@ -166,7 +169,7 @@ module.exports = plugin.withOptions(
                 })
             ];
 
-            addUtilities(utilities);
+            addUtilities(utilities.flat());
         };
     },
     () => ({

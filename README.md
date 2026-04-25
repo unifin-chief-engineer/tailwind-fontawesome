@@ -12,9 +12,9 @@ The quickest way to get started is via the official CDN with a free Font Awesome
 
 ### Support
 
-This plugin is **currently compatible with both Tailwind 2 & 3**. From the 1.0.0 release onwards,
-only Tailwind 3 will be supported. Previous releases should continue to work for the foreseeable
-future however.
+This plugin is **compatible with Tailwind 4**.
+
+If you need Tailwind 2 or 3 support, stay on the `0.x` releases.
 
 ## Installation
 
@@ -31,11 +31,20 @@ yarn add tailwind-fontawesome
 pnpm install tailwind-fontawesome
 ```
 
-Then add the plugin to your `tailwind.config.js` file:
+Then load the plugin in your CSS:
+
+```css
+@import "tailwindcss";
+@plugin "tailwind-fontawesome";
+```
+
+If you need to pass plugin options or customize `iconStyle` / `iconSpacing`, load a JavaScript
+config explicitly from CSS and register the plugin there:
 
 ```js
 // tailwind.config.js
 module.exports = {
+    content: ['./src/**/*.{html,js}'],
     theme: {
         // ...
     },
@@ -46,10 +55,15 @@ module.exports = {
 };
 ```
 
+```css
+@config "./tailwind.config.js";
+@import "tailwindcss";
+```
+
 ### Need the Pro version?
 
 By default, the plugin will reference the free Font Family. If you have a Font Awesome Pro kit, you
-can switch the Font Family by passing the following configuration option:
+can switch the Font Family by passing the following configuration option in `tailwind.config.js`:
 
 ```js
 // tailwind.config.js
@@ -68,8 +82,7 @@ module.exports = {
 
 ### What about Font Awesome 6?
 
-The plugin defaults to Font Awesome 5, however, from version 0.3 Font Awesome 6 icon sets are also
-supported:
+The plugin defaults to Font Awesome 5, however Font Awesome 6 icon sets are also supported:
 
 ```js
 // tailwind.config.js
@@ -88,8 +101,8 @@ module.exports = {
 
 ### Classic vs Sharp?
 
-The newer 'sharp' icon sets are supported via the `family` option (v0.4 and up), otherwise 'classic'
-mode is assumed:
+The newer 'sharp' icon sets are supported via the `family` option, otherwise 'classic' mode is
+assumed:
 
 ```js
 // tailwind.config.js
@@ -111,8 +124,7 @@ in Font Awesome 6 Pro).
 
 ### Custom Mapping
 
-If you want to have a custom mapping or add missing icons you can use the `custom` option (v0.6 and
-up):
+If you want to have a custom mapping or add missing icons you can use the `custom` option:
 
 ```js
 // tailwind.config.js
@@ -209,7 +221,7 @@ _Full list of available icons at the Font Awesome [website](https://fontawesome.
 
 ## Customization
 
-You can override/extend the generated style and spacing values in your `tailwind.config.js` file:
+You can override or extend the generated style and spacing values in your `tailwind.config.js` file:
 
 ```js
 // tailwind.config.js

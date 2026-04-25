@@ -1,6 +1,7 @@
 ### Dependencies & Artifacts ###
 
 dist/
+test/fixtures/smoke/output.css
 
 ### Dependencies ###
 
